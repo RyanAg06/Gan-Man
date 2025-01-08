@@ -70,10 +70,7 @@ public class PanelJugar extends JPanel
 					{
 						for(Fantasmas fantasma : fantasmasList)
 						{
-							if(fantasma.getModoCaza())
-							{
-								fantasma.cambiarModo();
-							}
+							fantasma.modoHuir();
 						}
 						puntos += 250;
 						comida--;
@@ -104,6 +101,7 @@ public class PanelJugar extends JPanel
 						{
 							pausarPartida(2000);
 							jugador1.morir();
+							System.out.println("GanMan Muerto");
 							if(jugador1.getVidas() <= 0)
 							{
 								terminarPartida();
@@ -114,6 +112,7 @@ public class PanelJugar extends JPanel
 							pausarPartida(1000);
 							fantasma.morir();
 							puntos += 500;
+							System.out.println("Fantasma Muerto");
 						}
 					}
 				}
@@ -225,9 +224,14 @@ public class PanelJugar extends JPanel
 		int cantidadFantasmas = 0;
 		do
 		{
-			cantidadFantasmas = Integer.parseInt(JOptionPane.showInputDialog(null, "Ingresa los Fantasmas 0-4"));
+			String str_cantidadFantasmas = JOptionPane.showInputDialog(null, "Ingresa los Fantasmas 0-4");
+			if(str_cantidadFantasmas == null || str_cantidadFantasmas.equals(""))
+			{
+				str_cantidadFantasmas = "0";
+			}
+			cantidadFantasmas = Integer.parseInt(str_cantidadFantasmas);
 		}
-		while(cantidadFantasmas < 0 || cantidadFantasmas > 4 );
+		while(cantidadFantasmas < 0 || cantidadFantasmas > 4);
 
 		// Creo Fantasmas
 		for (int a = 1; a <= cantidadFantasmas; a++)
@@ -283,10 +287,7 @@ public class PanelJugar extends JPanel
 			fantasma.setY(partida.getFanY(a));
 			fantasma.setComida(comida);
 			fantasma.setComidaAux(comida);
-			if(!fantasma.getModoCaza())
-			{
-				fantasma.cambiarModo();
-			}
+			fantasma.modoCaza();
 			a++;
 		}
 	}
@@ -335,6 +336,9 @@ public class PanelJugar extends JPanel
 		// Reinicio Posicion GanMan
 		jugador1.inmovilizar();
 		jugador1.cargarSpawn();
+		
+		// Muestro Mensaje Final
+		JOptionPane.showMessageDialog(null, "Perdiste :c");
 		
 		// PanelJugar
 		setVisible(false);
@@ -394,16 +398,6 @@ public class PanelJugar extends JPanel
 					case 40 -> jugador1.setDIreccion('d');
 					
 					// Movimiento Jugador 2
-					case 81 ->
-					{
-						System.out.println("Jugador 2 Desactivado");
-						break;
-					}
-					case 69 ->
-					{
-						System.out.println("Jugador 2 Activado");
-						break;
-					}
 					case 87 ->
 					{
 						for(Fantasmas fantasma : fantasmasList)
@@ -443,22 +437,21 @@ public class PanelJugar extends JPanel
 					{
 						int auxVelocidad = jugador1.getVelocidad() + 25;
 						jugador1.setVelocidad(auxVelocidad);
-						System.out.println("Velovidad GanMan Reducica");
+						System.out.println("Velocidad GanMan Reducida");
 						break;
 					}
 					case 222 ->	// Tecla "
 					{
 						int auxVelocidad = jugador1.getVelocidad() - 25;
 						jugador1.setVelocidad(auxVelocidad);
-						System.out.println("Velovidad GanMan Aumentada");
+						System.out.println("Velocidad GanMan Aumentada");
 						break;
 					}
 					case 80 ->	// Tecla P
 					{
 						for(Fantasmas fantasma : fantasmasList)
 						{
-							fantasma.setModoCaza(true);
-							fantasma.cambiarModo();
+							fantasma.modoHuir();
 						}
 						System.out.println("Fantasmas Modo Cambiado");
 						break;

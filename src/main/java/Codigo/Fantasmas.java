@@ -2,6 +2,7 @@ package Codigo;
 
 // imports
 import static Codigo.PathFinder.findPath;
+import com.sun.source.tree.ContinueTree;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Timer;
@@ -18,10 +19,9 @@ public final class Fantasmas
 	private final ImageIcon imgChefBlanco = new ImageIcon("./src/main/java/Imagenes/chefBlanco.png");
 	private TimerTask tareaMover;
 	private ArrayList<Node> ruta = null;
-	private Thread hiloHuir;
 	
 	// Variables
-	private int spawnX, spawnY, fanX, fanY, ganX, ganY, tipo, velocidad = 600, comidaMapa, auxComida, tiempoHuir = 0;
+	private int spawnX, spawnY, fanX, fanY, ganX, ganY, tipo, velocidad = 600, comidaMapa, auxComida;
 	private int mapa[][];
 	private final int auxTipo;
 	private boolean modoCaza = true, modoPausa = false;
@@ -61,7 +61,7 @@ public final class Fantasmas
 		cargarSpawn();
 		if(!modoCaza)
 		{
-			cambiarModo();
+			modoCaza();
 		}
 	}
 	public void cargarSpawn()
@@ -69,40 +69,25 @@ public final class Fantasmas
 		fanX = spawnX;
 		fanY = spawnY;
 	}
-	public void cambiarModo()
+	public void modoCaza()
 	{
-		modoCaza = !modoCaza;
-		if(modoCaza)
-		{
-			
-			tiempoHuir = 10;
-			
-			hiloHuir = new Thread(() ->
-			{
-				try
-				{
-					for(int a = tiempoHuir; a <= 0; a--)
-					{
-						System.out.println("Tiempo Restante: " + a);
-						Thread.sleep(1000);
-					}
-					
-					tipo = auxTipo;
-					
-					
-				}
-				catch(InterruptedException e) {}
-			});
-		}
-		else
-		{
-			tiempoHuir = 0;
-			tipo = 0;
-		}
+		limpiarRuta();
+		modoCaza = true;
+		tipo = auxTipo;
 		inmovilizar();
 		mover();
-		
-		
+	}
+	public void modoHuir()
+	{
+		limpiarRuta();
+		modoCaza = false;
+		tipo = 0;
+		inmovilizar();
+		mover();
+	}
+	public void limpiarRuta()
+	{
+		// Vacio Ruta de Fantasmas Naranja y Morado
 		if(tipo == 2 || tipo == 4)
 		{
 			ruta.clear();
